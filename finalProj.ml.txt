@@ -1,0 +1,41 @@
+open List
+
+type exp = Num of float
+        | EarnedVal of exp * exp
+        | ActualVal of exp * exp
+        | CostVar of exp * exp
+        | CostPer of exp * exp
+        | Sum of float list
+        | Avg of float list
+        | Budget of exp * exp * exp;;
+
+type value = FloatVal of float | IntVal of int | BoolVal of bool;;
+
+let rec sum el =
+        match el with
+        | [] -> 0.
+        | hd :: tl -> hd +. (sum tl);;
+
+let rec count el =
+        match el with
+        | [] -> 0.
+        | hd :: tl -> 1. +. (count tl);;
+
+let rec eval_exp ( e:exp ) =
+        match e with
+        | Num e -> Some( FloatVal e )
+        | EarnedVal (e1, e2) -> (match eval_exp e1, eval_exp e2 with
+                                        | Some( FloatVal f1), Some( FloatVal f2) -> Some( FloatVal( f1 *. f2))
+                                        | _,_ -> None)
+        | ActualVal( e1, e2) -> (match eval_exp e1, eval_exp e2 with
+                                        | Some( FloatVal f1), Some( FloatVal f2) -> Some( FloatVal( f1 *. f2))
+                                        | _, _ -> None)
+        | CostVar( e1, e2) -> (match eval_exp e1, eval_exp e2 with
+                                        | Some( FloatVal f1), Some(FloatVal f2) -> Some( FloatVal( f1 /. f2))
+                                        | _, _ -> None)
+        | CostPer( e1, e2) -> (match eval_exp e1, eval_exp e2 with
+                                        | Some( FloatVal f1), Some(FloatVal f2) -> Some( FloatVal( f1 -. f2))
+                                        | _, _ -> None)
+        | Sum( el) -> Some( FloatVal( sum(el)))
+        | Avg( el) -> Some( FloatVal ( sum(el) /. count(el)))
+        | _ -> None;;

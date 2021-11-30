@@ -1,15 +1,16 @@
 open List
 
 type exp = Num of float
+        | NumList of float list
         | EarnedVal of exp * exp
         | ActualVal of exp * exp
         | CostVar of exp * exp
         | CostPer of exp * exp
-        | Sum of float list
-        | Avg of float list
+        | Sum of exp
+        | Avg of exp * exp
         | Budget of exp * exp * exp;;
 
-type value = FloatVal of float | IntVal of int | BoolVal of bool;;
+type value = FloatVal of float | FloatList of float list;;
 
 let rec sum el =
         match el with
@@ -24,6 +25,7 @@ let rec count el =
 let rec eval_exp ( e:exp ) =
         match e with
         | Num e -> Some( FloatVal e )
+        | NumList el -> Some( FloatList el)
         | EarnedVal (e1, e2) -> (match eval_exp e1, eval_exp e2 with
                                         | Some( FloatVal f1), Some( FloatVal f2) -> Some( FloatVal( f1 *. f2))
                                         | _,_ -> None)
@@ -31,11 +33,16 @@ let rec eval_exp ( e:exp ) =
                                         | Some( FloatVal f1), Some( FloatVal f2) -> Some( FloatVal( f1 *. f2))
                                         | _, _ -> None)
         | CostVar( e1, e2) -> (match eval_exp e1, eval_exp e2 with
+                                        | _, Some( FloatVal 0.) -> None
                                         | Some( FloatVal f1), Some(FloatVal f2) -> Some( FloatVal( f1 /. f2))
                                         | _, _ -> None)
         | CostPer( e1, e2) -> (match eval_exp e1, eval_exp e2 with
                                         | Some( FloatVal f1), Some(FloatVal f2) -> Some( FloatVal( f1 -. f2))
                                         | _, _ -> None)
-        | Sum( el) -> Some( FloatVal( sum(el)))
-        | Avg( el) -> Some( FloatVal ( sum(el) /. count(el)))
+        | Sum( el) -> (match eval_exp el with
+                        | Some( FloatList el) -> Some( FloatVal( sum(el)))
+                        | _ -> None)
+        | Avg( el) -> (match eval_exp el with
+                        | Some( FloatList f1) -> Some( FloatVal ( sum(f1) /. count(f1)))
+                        | _ -> None)
         | _ -> None;;

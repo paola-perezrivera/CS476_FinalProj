@@ -53,11 +53,11 @@ let rec eval_exp ( e:exp ) =
         | ActualVal( e1, e2) -> (match eval_exp e1, eval_exp e2 with
                                         | Some( FloatVal f1), Some( FloatVal f2) -> Some( FloatVal( f1 *. f2))
                                         | _, _ -> None)
-        | CostVar( e1, e2) -> (match eval_exp e1, eval_exp e2 with
+        | CostPer( e1, e2) -> (match eval_exp e1, eval_exp e2 with
                                         | _, Some( FloatVal 0.) -> None
                                         | Some( FloatVal f1), Some(FloatVal f2) -> Some( FloatVal( f1 /. f2))
                                         | _, _ -> None)
-        | CostPer( e1, e2) -> (match eval_exp e1, eval_exp e2 with
+        | CostVar( e1, e2) -> (match eval_exp e1, eval_exp e2 with
                                         | Some( FloatVal f1), Some(FloatVal f2) -> Some( FloatVal( f1 -. f2))
                                         | _, _ -> None)
         | Sum( el) -> (match eval_exp el with
@@ -83,14 +83,14 @@ let el = eval_exp( NumList[ 1.; 2.; 3.; 4.; 5.]);; (* return Some( FloatList [1.
 (* tests for EarnedVal *)
 let earned_test1 = eval_exp( EarnedVal( Num 5., Num 4.));; (* return Some( FloatVal 20.) *)
 
-(* CostVar tests *)
-let costvar_test1 = eval_exp( CostVar( EarnedVal( Num 5., Num 4.), ActualVal( Num 8., Num 9.)));; (* return Some( FloatVal (0.27777779)) *)
-let costvar_test2 = eval_exp( CostVar( Num 7., Num 0.)) (* return None *)
-let costvar_test3 = eval_exp( CostVar( Num 7., Num 2.)) (* return Some(FloatVal 3.5) *)
-
 (* CostPer tests *)
-let costper_test1 = eval_exp( CostPer( EarnedVal( Num 8., Num 2.), ActualVal( Num 9., Num 3.)));; (* return Some( FloatVal ( -11.)) *)
-let costper_test2 = eval_exp( CostPer( Num 7., Num 4.));; (* return Some( FloatVal 3.) *)
+let costper_test1 = eval_exp( CostPer( EarnedVal( Num 5., Num 4.), ActualVal( Num 8., Num 9.)));; (* return Some( FloatVal (0.27777779)) *)
+let costper_test2 = eval_exp( CostPer( Num 7., Num 0.)) (* return None *)
+let costper_test3 = eval_exp( CostPer( Num 7., Num 2.)) (* return Some(FloatVal 3.5) *)
+
+(* CostVar tests *)
+let costvar_test1 = eval_exp( CostVar( EarnedVal( Num 8., Num 2.), ActualVal( Num 9., Num 3.)));; (* return Some( FloatVal ( -11.)) *)
+let costvar_test2 = eval_exp( CostVar( Num 7., Num 4.));; (* return Some( FloatVal 3.) *)
 
 (* tests for sum *)
 let sum_test1 = eval_exp (Sum (NumList [3.0; 6.0; 9.0; 23.0]));; (* should be (FloatVal 41.) *)

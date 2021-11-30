@@ -31,7 +31,7 @@ let rec findAllJ b c1 c2 i j max =
 
 
 let rec findAll max secondMax b c1 c2 i = 
-        if (i = max+.1.) then (i,i)::[] else 
+        if (i = max+.1.) then [] else 
                 let j = (findAllJ b c1 c2 i 0. secondMax) in
                 j::(findAll max secondMax b c1 c2 (i+.1.))
 

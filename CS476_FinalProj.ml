@@ -62,7 +62,7 @@ let rec eval_exp ( e:exp ) =
         | Budget (b, e1, e2) -> (match eval_exp b, eval_exp e1, eval_exp e2 with
                                 | Some( FloatVal f1), Some(FloatVal f2), Some(FloatVal f3) -> let max = findMax f1 f2 in
                                                                                               let secondMax = findMax f1 f3 in
-                                                                                              Some(FloatTuple(findAll max secondMax f1 f2 f3 0.)))
-        | _ -> None;;
+                                                                                              Some(FloatTuple(findAll max secondMax f1 f2 f3 0.))
+                                | _ -> None);;
 
 let test1 = eval_exp (Budget (Num 10.0, Num 2.0, Num 0.5));;

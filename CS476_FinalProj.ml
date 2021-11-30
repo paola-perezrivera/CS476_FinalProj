@@ -25,14 +25,16 @@ let rec count el =
 let findMax b findingMax = 
         b /. findingMax
 
+
 let rec findAllJ b c1 c2 i j max = 
-        if (j = max+.1.) then (i,j) else 
-             if (c1 *. i +. c2 *. j) = b then (i,j) else (findAllJ b c1 c2 i (j+.1.) max)
+        if (j = max+.1.) then (0.0,0.0) else 
+                if (c1 *. i +. c2 *. j) = b then (i,j) else (findAllJ b c1 c2 i (j+.1.) max)
 
 
 let rec findAll max secondMax b c1 c2 i = 
         if (i = max+.1.) then [] else 
                 let j = (findAllJ b c1 c2 i 0. secondMax) in
+                if (j = (0.0,0.0)) then (findAll max secondMax b c1 c2 (i+.1.)) else 
                 j::(findAll max secondMax b c1 c2 (i+.1.))
 
 
@@ -66,3 +68,4 @@ let rec eval_exp ( e:exp ) =
                                 | _ -> None);;
 
 let test1 = eval_exp (Budget (Num 10.0, Num 2.0, Num 0.5));;
+let test2 = eval_exp (Budget (Num 36.0, Num 4.0, Num 3.0));;
